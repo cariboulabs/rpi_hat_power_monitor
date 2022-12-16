@@ -1,7 +1,7 @@
 /**
  * \file
  *
- * \brief CPUINT related functionality implementation.
+ * \brief Watchdog Timer related functionality implementation.
  *
  (c) 2020 Microchip Technology Inc. and its subsidiaries.
 
@@ -25,38 +25,21 @@
  *
  */
 
-/**
- * \defgroup doc_driver_system_cpuint CPU Interrupt Controller
- * \ingroup doc_driver_system
- *
- * \section doc_driver_cpuint_rev Revision History
- * - v0.0.0.1 Initial Commit
- *
- *@{
- */
+#ifndef WATCHDOG_TIMER_H_INCLUDED
+#define WATCHDOG_TIMER_H_INCLUDED
+
 #include <compiler.h>
-#include <cpuint.h>
+#include <wdt.h>
 #include <ccp.h>
-#include <atomic.h>
-/**
- * \brief Initialize cpuint interface
- *
- * \return Initialization status
- */
-int8_t CPUINT_init()
-{
 
-	/* IVSEL and CVT are Configuration Change Protected */
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-	// ccp_write_io((void*)&(CPUINT.CTRLA),0 << CPUINT_CVT_bp /* Compact Vector Table: disabled */
-	//		 | 0 << CPUINT_IVSEL_bp /* Interrupt Vector Select: disabled */
-	//		 | 0 << CPUINT_LVL0RR_bp /* Round-robin Scheduling Enable: disabled */);
+int8_t WDT_0_init();
 
-	// CPUINT.LVL0PRI = 0x0 << CPUINT_LVL0PRI_gp; /* Interrupt Level Priority: 0x0 */
-
-	// CPUINT.LVL1VEC = 0x0 << CPUINT_LVL1VEC_gp; /* Interrupt Vector with High Priority: 0x0 */
-
-	ENABLE_INTERRUPTS();
-
-	return 0;
+#ifdef __cplusplus
 }
+#endif
+
+#endif /* WATCHDOG_TIMER_H_INCLUDED */

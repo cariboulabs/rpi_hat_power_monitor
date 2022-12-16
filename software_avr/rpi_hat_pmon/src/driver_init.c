@@ -295,4 +295,5 @@ void system_init()
 	TIMER_0_initialization();
 
 	BOD_init();
+	WDT_0_init();
 }

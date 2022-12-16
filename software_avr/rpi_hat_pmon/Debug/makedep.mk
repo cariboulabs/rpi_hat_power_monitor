@@ -58,3 +58,5 @@ src\tcb.c
 
 src\usart_basic.c
 
+src\wdt.c
+

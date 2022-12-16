@@ -1,7 +1,7 @@
 /**
  * \file
  *
- * \brief CPUINT related functionality implementation.
+ * \brief WDT related functionality implementation.
  *
  (c) 2020 Microchip Technology Inc. and its subsidiaries.
 
@@ -26,37 +26,27 @@
  */
 
 /**
- * \defgroup doc_driver_system_cpuint CPU Interrupt Controller
- * \ingroup doc_driver_system
+ * \addtogroup doc_driver_wdt
  *
- * \section doc_driver_cpuint_rev Revision History
+ * \section doc_driver_wdt_rev Revision History
  * - v0.0.0.1 Initial Commit
  *
  *@{
  */
-#include <compiler.h>
-#include <cpuint.h>
-#include <ccp.h>
-#include <atomic.h>
+
+#include <wdt.h>
+
 /**
- * \brief Initialize cpuint interface
+ * \brief Initialize Watchdog Timer
  *
- * \return Initialization status
+ * \return 0
  */
-int8_t CPUINT_init()
+int8_t WDT_0_init()
 {
 
-	/* IVSEL and CVT are Configuration Change Protected */
-
-	// ccp_write_io((void*)&(CPUINT.CTRLA),0 << CPUINT_CVT_bp /* Compact Vector Table: disabled */
-	//		 | 0 << CPUINT_IVSEL_bp /* Interrupt Vector Select: disabled */
-	//		 | 0 << CPUINT_LVL0RR_bp /* Round-robin Scheduling Enable: disabled */);
-
-	// CPUINT.LVL0PRI = 0x0 << CPUINT_LVL0PRI_gp; /* Interrupt Level Priority: 0x0 */
-
-	// CPUINT.LVL1VEC = 0x0 << CPUINT_LVL1VEC_gp; /* Interrupt Vector with High Priority: 0x0 */
-
-	ENABLE_INTERRUPTS();
+	ccp_write_io((void *)&(WDT.CTRLA),
+	             WDT_PERIOD_1KCLK_gc /* 1K cycles (1.0s) */
+	                 | WDT_WINDOW_OFF_gc /* Off */);
 
 	return 0;
 }

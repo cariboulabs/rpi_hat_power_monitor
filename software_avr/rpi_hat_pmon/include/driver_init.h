@@ -60,6 +60,8 @@
 #include <tcb.h>
 
 #include <bod.h>
+#include <wdt.h>
+#include <ccp.h>
 
 #ifdef __cplusplus
 extern "C" {

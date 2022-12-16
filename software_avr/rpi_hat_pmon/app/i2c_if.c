@@ -8,8 +8,9 @@
 #include <atmel_start.h>
 #include <atomic.h>
 #include "i2c_if.h"
+#include "common_data_types.h"
 
-#define I2C_IF_VERSION_SHORT		(((uint8_t)(SOFTWARE_VERSION) & 0xF << 4) | ((uint8_t)(SOFTWARE_SUBVERSION)) & 0xF)
+#define I2C_IF_VERSION_SHORT		(SOFTWARE_VERSION << 4) | (SOFTWARE_SUBVERSION)
 #define I2C_IF_SHORT_SCALING(v,s)	{(v)/=(s); if ((v)<0) (v)=0; if ((v)>255) (v)=255;}
 	
 static i2c_if_st* this_i2c = NULL;
@@ -25,7 +26,7 @@ void i2c_if_bus_error_handler();
 //==============================================================================================
 void i2c_if_update_reg(i2c_if_st* i2c, I2C_IF_REG_en reg, int32_t val, I2C_IF_UPDATE_SRC_en src)
 {
-	i2c_if_reg_st *reg_s = &i2c->registers[I2C_REG_LOAD_SW_STATE];
+	i2c_if_reg_st *reg_s = &i2c->registers[reg];
 	switch (reg)
 	{
 		// --------------------------------------------
@@ -67,7 +68,7 @@ void i2c_if_update_reg(i2c_if_st* i2c, I2C_IF_REG_en reg, int32_t val, I2C_IF_UP
 		// --------------------------------------------
 		case I2C_REG_POWER: 
 			{
-				I2C_IF_SHORT_SCALING(val,125);
+				I2C_IF_SHORT_SCALING(val,125000);
 				reg_s->val = val;
 			}
 			break;
@@ -125,12 +126,8 @@ void i2c_if_set_reg_cb(i2c_if_st* i2c, I2C_IF_REG_en reg, i2c_if_command_callbac
 void i2c_if_address_handler()
 {
 	uint8_t slave_addr = I2C_0_read();
-	
-	if (slave_addr == this_i2c->addr)
-	{
-		this_i2c->bus_state = I2C_STATE_SLAVE_ADDR;
-		I2C_0_send_ack();
-	}
+	I2C_0_send_ack();
+	this_i2c->bus_state = I2C_STATE_SLAVE_ADDR;
 }
 
 //==============================================================================================
@@ -152,7 +149,7 @@ void i2c_if_write_handler()
 {
 	if (this_i2c->bus_state == I2C_STATE_SLAVE_ADDR)
 	{
-		this_i2c->reg_addr = I2C_0_read();
+		this_i2c->reg_addr = I2C_0_read() % I2C_REGS_MAX;
 		I2C_0_send_ack();
 		this_i2c->bus_state = I2C_STATE_DATA_WRITE;
 	}

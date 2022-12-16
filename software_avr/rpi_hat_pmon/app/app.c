@@ -83,9 +83,15 @@ void debug_if_callback(OPCODE_en opcode, void* data, uint32_t len, void* context
 void load_switch_fault_event(void *pin, bool new_val, uint8_t details, void* context)
 {
 	app_st* s = (app_st*)context;
+	// negative logic on fault
+	bool fault_state = (new_val == 0);
 	
-	// negative logic on the button pressing
-	s->state_data.load_sw_fault_state = (new_val == 0);
+	s->state_data.load_sw_fault_state = fault_state;
+	if (fault_state)
+	{
+		// turn off
+		LOAD_SWITCH_EN_set_level(true);
+	}
 	i2c_if_update_reg(&s->i2c, I2C_REG_FAULT_STATE, (int32_t)(s->state_data.load_sw_fault_state), I2C_IF_UPDATE_SRC_APP);
 }
 
@@ -108,6 +114,8 @@ void timer_callback(uint32_t time, void* context)
 	
 	// scheduling
 	timed_task_tick(&s->send_report_task);
+	
+	//WDT_0_init();
 }
 
 //=========================================================================================
@@ -127,6 +135,17 @@ void voltage_callback(void* p, void* context)
 	s->state_data.power = s->state_data.voltage * s->state_data.current;
 	i2c_if_update_reg(&s->i2c, I2C_REG_VOLTAGE, (int32_t)(s->state_data.voltage), I2C_IF_UPDATE_SRC_APP);
 	i2c_if_update_reg(&s->i2c, I2C_REG_POWER, (int32_t)(s->state_data.power), I2C_IF_UPDATE_SRC_APP);
+	
+	// if trying to push 5V but under-voltage
+	if (s->state_data.voltage < 3400.0f && s->state_data.load_sw_state)
+	{
+		/*s->state_data.load_sw_state = false;
+		s->state_data.load_sw_fault_state = true;
+		// turn off
+		LOAD_SWITCH_EN_set_level(true);
+		i2c_if_update_reg(&s->i2c, I2C_REG_LOAD_SW_STATE, (int32_t)(s->state_data.load_sw_state), I2C_IF_UPDATE_SRC_APP);
+		i2c_if_update_reg(&s->i2c, I2C_REG_FAULT_STATE, (int32_t)(s->state_data.load_sw_fault_state), I2C_IF_UPDATE_SRC_APP);*/
+	}
 }
 
 //=========================================================================================
@@ -138,6 +157,17 @@ void current_callback(void* p, void* context)
 	s->state_data.power = s->state_data.voltage * s->state_data.current;
 	i2c_if_update_reg(&s->i2c, I2C_REG_CURRENT, (int32_t)(s->state_data.current), I2C_IF_UPDATE_SRC_APP);
 	i2c_if_update_reg(&s->i2c, I2C_REG_POWER, (int32_t)(s->state_data.power), I2C_IF_UPDATE_SRC_APP);
+	
+	// if there is a short
+	if (s->state_data.current > 500.0f)
+	{
+		s->state_data.load_sw_state = false;
+		s->state_data.load_sw_fault_state = true;
+		// turn off
+		LOAD_SWITCH_EN_set_level(true);
+		i2c_if_update_reg(&s->i2c, I2C_REG_LOAD_SW_STATE, (int32_t)(s->state_data.load_sw_state), I2C_IF_UPDATE_SRC_APP);
+		i2c_if_update_reg(&s->i2c, I2C_REG_FAULT_STATE, (int32_t)(s->state_data.load_sw_fault_state), I2C_IF_UPDATE_SRC_APP);
+	}
 }
 
 //=========================================================================================
@@ -155,6 +185,12 @@ void i2c_if_data_callback(I2C_IF_REG_en reg, uint8_t val, void* context)
 		case I2C_REG_LOAD_SW_STATE:
 			// negative logic
 			LOAD_SWITCH_EN_set_level(val == 0);
+			sys.state_data.load_sw_state = val;
+			if (val == 0)
+			{
+				s->state_data.load_sw_fault_state = false;
+				i2c_if_update_reg(&s->i2c, I2C_REG_FAULT_STATE, (int32_t)(s->state_data.load_sw_fault_state), I2C_IF_UPDATE_SRC_APP);
+			}
 			break;
 		
 		case I2C_REG_LED1_STATE:
@@ -205,8 +241,10 @@ void app(void)
 	i2c_if_set_reg_cb(&sys.i2c, I2C_REG_LED2_STATE, i2c_if_data_callback);
 	
 	// initial states of IOs
+	LOAD_SWITCH_EN_set_level(true);
 	sys.state_data.load_sw_state = !LOAD_SWITCH_EN_get_level();
-	sys.state_data.load_sw_fault_state = !LOAD_SWITCH_FAULT_get_level();
+	i2c_if_update_reg(&sys.i2c, I2C_REG_LOAD_SW_STATE, (int32_t)(sys.state_data.load_sw_state), I2C_IF_UPDATE_SRC_APP);
+	sys.state_data.load_sw_fault_state = 0;
 	
 	// main loop
 	sys_main_loop();
@@ -218,5 +256,6 @@ void sys_main_loop(void)
 	while (true)
 	{
 		timed_task_fetch(&sys.send_report_task);
+		__asm__("wdr");
 	}
 }

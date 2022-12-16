@@ -90,10 +90,10 @@ void I2C_0_init()
 	//		 | TWI_SDAHOLD_OFF_gc /* SDA hold time off */
 	//		 | TWI_SDASETUP_4CYC_gc; /* SDA setup time is 4 clock cycles */
 
-	// TWI0.DBGCTRL = 0 << TWI_DBGRUN_bp; /* Debug Run: disabled */
+	TWI0.DBGCTRL = 1 << TWI_DBGRUN_bp; /* Debug Run: disabled */
 
 	TWI0.SADDR = 0x25 << TWI_ADDRMASK_gp /* Slave Address: 0x25 */
-	             | 0 << TWI_ADDREN_bp;   /* General Call Recognition Enable: disabled */
+	             | 1 << TWI_ADDREN_bp;   /* General Call Recognition Enable: disabled */
 
 	// TWI0.SADDRMASK = 0 << TWI_ADDREN_bp /* Address Mask Enable: disabled */
 	//		 | 0x0 << TWI_ADDRMASK_gp; /* Address Mask: 0x0 */

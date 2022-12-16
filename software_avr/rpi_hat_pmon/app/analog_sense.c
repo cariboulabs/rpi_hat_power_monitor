@@ -16,18 +16,18 @@ analog_sense_points_st analog_sensors =
 		.cb = NULL,
 		.context = NULL,
 		.adc_channel = 0x42,
-		.alpha_filter = 0.1f,
+		.alpha_filter = 0.2f,
 	},
 	
 	.voltage = {
 		.type = analog_sens_type_voltage,
 		.value = 0.0f,
 		.bias = 0.0f,
-		.conversion_coeff = 9.66f,
+		.conversion_coeff = 3.0f,
 		.cb = NULL,
 		.context = NULL,
 		.adc_channel = 0x3,
-		.alpha_filter = 0.1f,
+		.alpha_filter = 0.2f,
 	},
 	
 	.current = {
@@ -65,7 +65,7 @@ void analog_sense_adc_handler(void)
 	{
 		case analog_sens_type_current:
 		case analog_sens_type_voltage:
-			raw_val *= 2.048f / 4096.0f / 4.0f;
+			raw_val *= 2500.0f / 4096.0f / 4.0f;
 			interm_val = (raw_val + value->bias) * value->conversion_coeff;
 			break;
 		
@@ -105,7 +105,7 @@ int analog_sense_init(void)
 	analog_sense_dev.sens_points = &analog_sensors;
 	analog_sense_dev.current_sensor = 0;
 	
-	VREF.ADC0REF = 0x00 | VREF_REFSEL_2V048_gc;
+	VREF.ADC0REF = 0x00 | VREF_REFSEL_2V500_gc;
 	
 	ADC_0_start_conversion(analog_sense_dev.sens_points_values[analog_sense_dev.current_sensor].adc_channel);
 	return 0;

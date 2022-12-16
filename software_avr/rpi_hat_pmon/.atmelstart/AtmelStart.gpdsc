@@ -50,6 +50,7 @@
         <file category="doc" condition="GCC, XC8, IAR" name="modules/timer/doc/tcb.rst"/>
         <file category="doc" condition="GCC, XC8, IAR" name="modules/twi/doc/twi.rst"/>
         <file category="doc" condition="GCC, XC8, IAR" name="modules/usart/doc/usart_basic.rst"/>
+        <file category="doc" condition="GCC, XC8, IAR" name="modules/wdt/doc/wdt.rst"/>
         <file category="source" condition="GCC, XC8, IAR" name="main.c"/>
         <file category="source" condition="GCC, XC8, IAR" name="src/driver_init.c"/>
         <file category="header" condition="GCC, XC8, IAR" name="include/driver_init.h"/>
@@ -92,6 +93,7 @@
         <file category="header" condition="GCC, XC8, IAR" name="include/system.h"/>
         <file category="header" condition="GCC, XC8, IAR" name="include/tcb.h"/>
         <file category="header" condition="GCC, XC8, IAR" name="include/usart_basic.h"/>
+        <file category="header" condition="GCC, XC8, IAR" name="include/wdt.h"/>
         <file category="source" condition="GCC, XC8, IAR" name="src/adc_basic.c"/>
         <file category="source" condition="GCC, XC8, IAR" name="src/bod.c"/>
         <file category="source" condition="GCC, XC8, IAR" name="src/clkctrl.c"/>
@@ -103,6 +105,7 @@
         <file category="source" condition="GCC, XC8, IAR" name="src/slpctrl.c"/>
         <file category="source" condition="GCC, XC8, IAR" name="src/tcb.c"/>
         <file category="source" condition="GCC, XC8, IAR" name="src/usart_basic.c"/>
+        <file category="source" condition="GCC, XC8, IAR" name="src/wdt.c"/>
         <file category="header" condition="GCC, XC8, IAR" name="utils/assembler.h"/>
         <file category="header" condition="GCC, XC8, IAR" name="utils/assembler/gas.h"/>
         <file category="header" condition="GCC, XC8, IAR" name="utils/assembler/iar.h"/>

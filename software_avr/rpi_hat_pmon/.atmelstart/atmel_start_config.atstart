@@ -376,6 +376,25 @@ drivers:
     variant: null
     clocks:
       domain_group: null
+  WDT_0:
+    user_label: WDT_0
+    definition: Atmel:AVRDA_32_drivers:1.0.0::AVR32DA32::WDT::driver_config_definition::WDT::Drivers:WDT:Init
+    functionality: WDT
+    api: Drivers:WDT:Init
+    configuration:
+      wdt_ctrla_period: 1K cycles (1.0s)
+      wdt_ctrla_window: 'Off'
+    optional_signals: []
+    variant: null
+    clocks:
+      domain_group:
+        nodes:
+        - name: WDT
+          input: 32kHz divided by 32
+          external: false
+          external_frequency: 0
+        configuration:
+          wdt_clock_source: 32kHz divided by 32
 pads:
   LOAD_SWITCH_EN:
     name: PC0
@@ -445,6 +464,13 @@ pads:
     configuration: null
 toolchain_options:
 - definition:
+    identifier: Atmel:AVRDA_32_drivers:1.0.0::AVR32DA32::environment_definition::All:Microchip.Studio.xc8:7.0.0
+  configuration:
+    compiler_config:
+      xc8_compiler_miscellaneous_OtherFlags: -std=gnu99
+    linker_config:
+      xc8_linker_miscellaneous_LinkerFlags: ''
+- definition:
     identifier: Atmel:AVRDA_32_drivers:1.0.0::AVR32DA32::environment_definition::All:Atmel.Studio:7.0.0
   configuration:
     compiler_config:
@@ -458,11 +484,4 @@ toolchain_options:
       avrgcc_compiler_miscellaneous_OtherFlags: -std=gnu99
     linker_config:
       avrgcc_linker_miscellaneous_LinkerFlags: ''
-- definition:
-    identifier: Atmel:AVRDA_32_drivers:1.0.0::AVR32DA32::environment_definition::All:Microchip.Studio.xc8:7.0.0
-  configuration:
-    compiler_config:
-      xc8_compiler_miscellaneous_OtherFlags: -std=gnu99
-    linker_config:
-      xc8_linker_miscellaneous_LinkerFlags: ''
 static_files: []
