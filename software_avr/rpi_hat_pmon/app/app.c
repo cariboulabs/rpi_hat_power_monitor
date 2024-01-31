@@ -241,7 +241,7 @@ void app(void)
 	i2c_if_set_reg_cb(&sys.i2c, I2C_REG_LED2_STATE, i2c_if_data_callback);
 	
 	// initial states of IOs
-	LOAD_SWITCH_EN_set_level(true);
+	LOAD_SWITCH_EN_set_level(false);
 	sys.state_data.load_sw_state = !LOAD_SWITCH_EN_get_level();
 	i2c_if_update_reg(&sys.i2c, I2C_REG_LOAD_SW_STATE, (int32_t)(sys.state_data.load_sw_state), I2C_IF_UPDATE_SRC_APP);
 	sys.state_data.load_sw_fault_state = 0;

@@ -2114,8 +2114,8 @@ void app(void)
      e50:	0e 94 63 0b 	call	0x16c6	; 0x16c6 <i2c_if_set_reg_cb>
 	
 	// initial states of IOs
-	LOAD_SWITCH_EN_set_level(true);
-     e54:	81 e0       	ldi	r24, 0x01	; 1
+	LOAD_SWITCH_EN_set_level(false);
+     e54:	80 e0       	ldi	r24, 0x00	; 0
      e56:	0e 94 b0 02 	call	0x560	; 0x560 <LOAD_SWITCH_EN_set_level>
 	sys.state_data.load_sw_state = !LOAD_SWITCH_EN_get_level();
      e5a:	0e 94 bf 02 	call	0x57e	; 0x57e <LOAD_SWITCH_EN_get_level>
